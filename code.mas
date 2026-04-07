@@ -1,0 +1,29 @@
+/Primeros 10 multiplos de 7
+ORG 000
+
+
+		Load Zero
+		StoreI P1
+
+Loop,	LoadI P1
+		Add BASE
+		Output
+		Store Var
+		Load P1
+		Add One
+		Store P1
+		Load Var
+		StoreI P1
+		Load CONT
+		Subt One
+		Store CONT
+		SkipCond 400
+		Jump Loop
+		Halt
+		
+P1, HEX 0050
+BASE, DEC 7
+CONT, DEC 10
+One, DEC 1
+Zero, DEC 0
+Var, DEC 10
