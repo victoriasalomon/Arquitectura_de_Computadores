@@ -1,0 +1,32 @@
+ORG 000
+
+		Load FIN
+		StoreI P2
+
+Loop, 	Load P1
+		Add ONE
+		Store P1
+
+		Load CONT
+		Add ONE
+		Store CONT
+		
+		LoadI P1
+		Subt FIN
+	
+		Skipcond 400
+		Jump Loop
+
+		Load CONT
+		Output
+		Halt
+		
+P1, HEX 0100
+P2, HEX 0105
+CONT, DEC 0
+ONE, DEC 1
+ZERO, DEC 0
+FIN, HEX 0D
+
+		
+		
