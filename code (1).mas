@@ -1,0 +1,47 @@
+/ Cantidad de números negativos en un bloque de datos.
+ORG 00F
+		Jump Start
+		
+		// Bloque de prueba (según enunciado)
+        DEC 3           	/ Longitud del bloque
+        DEC -5          
+        DEC 10          
+        DEC -2          
+
+		// Sección de datos
+		PTR_DATOS, HEX 0011	/ Puntero de base
+		DIR_LONG, HEX 0010	/ Puntero a la longitud del bloque
+		CONT_NEG, DEC 0		/ Contador de negativos
+		REG_ITER, DEC 0		/ Registro de iteración
+		ONE, DEC 1
+
+
+Start,	LoadI DIR_LONG	/ Cargo la longitud del bloque en el registro de iteración
+		Store REG_ITER
+
+Loop,	LoadI PTR_DATOS
+		SkipCond 0000	/ Si el número es negativo, incremento el contador NEG
+		Jump NoNeg
+		
+		Load CONT_NEG
+		Add ONE
+		Store CONT_NEG
+		
+NoNeg,	Load PTR_DATOS
+		Add ONE
+		Store PTR_DATOS
+		
+		Load REG_ITER
+		Subt ONE
+		Store REG_ITER
+		
+		SkipCond 400
+		Jump Loop
+		
+		Load CONT_NEG
+		Output
+		Halt
+	
+	
+
+
