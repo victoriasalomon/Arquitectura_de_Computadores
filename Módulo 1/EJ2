@@ -1,3 +1,4 @@
+/Cálculo del largo de una cadena de caracteres
 ORG 000
 
 		Load FIN
@@ -7,11 +8,11 @@ Loop, 	Load P1
 		Add ONE
 		Store P1
 
-		Load CONT
+		Load CONT	/ llevo la cuenta de caracteres
 		Add ONE
 		Store CONT
 		
-		LoadI P1
+		LoadI P1	/ comparo el contenido del puntero con el fin de la cadena
 		Subt FIN
 	
 		Skipcond 400
