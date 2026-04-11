@@ -1,19 +1,19 @@
-/Cálculo del largo de una cadena de caracteres
+/ Cálculo del largo de una cadena de caracteres
 ORG 000
 
 		Load FIN
-		StoreI P2	/ Define EOF en fin de buffer.
+		StoreI P2	/ Define EOF en fin de buffer
 
 Loop, 	Load P1
 		Add ONE
-		Store P1	/ Actualización de puntero (siguiente posición).
+		Store P1	/ Actualización de puntero (siguiente posición)
 
 		Load CONT	
 		Add ONE
 		Store CONT
 		
 		LoadI P1	
-		Subt FIN	/ Compara el carácter actual con el delimitador (hex 0D).
+		Subt FIN	/ Compara el carácter actual con el delimitador (hex 0D)
 	
 		Skipcond 400
 		Jump Loop
@@ -22,12 +22,12 @@ Loop, 	Load P1
 		Output
 		Halt
 		
-P1, HEX 0100	/ Dirección inicial de la cadena.
-P2, HEX 0105	/ Dirección donde se insertará el fin de cadena.
-CONT, DEC 0		/ Contador del largo de cadena.
+P1, HEX 0100	/ Dirección inicial de la cadena
+P2, HEX 0105	/ Dirección donde se insertará el fin de cadena
+CONT, DEC 0		/ Contador del largo de cadena
 ONE, DEC 1
 ZERO, DEC 0
-FIN, HEX 0D		/ Carácter Carriage Return (delimitador).
+FIN, HEX 0D		/ Carácter Carriage Return (delimitador)
 
 		
 		
