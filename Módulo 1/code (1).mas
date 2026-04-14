@@ -1,0 +1,98 @@
+/ Cálculo del factorial utilizando subrutina
+ORG 000
+		Jump Start
+
+		// Sección de datos
+		N, DEC 5
+		FACTORIAL, DEC 0
+		TEMP, DEC 0
+		REG_ITER, DEC 0
+		one, DEC 1
+		negflag, DEC 0
+		result, DEC 0
+
+Start,	Load N
+		Store REG_ITER
+		Subt one
+		Store FACTORIAL
+		JnS Subr2
+		
+		Load FACTORIAL
+		Output
+		Halt
+
+// Programa de Multiplicación de ejemplo,
+// implementado como subrutina :
+
+Subr2, 	HEX 1
+
+		Load REG_ITER
+		Subt one
+		Store REG_ITER
+		Subt one
+		Store TEMP
+		SkipCond 400
+		JnS Subr1
+		JumpI Subr2
+		
+		
+
+Subr1,	HEX 0	/ Dirección de retorno
+		Clear
+		Store result
+
+		/ check if Y is negative, if -ve negate Y and set negative flag
+		Load TEMP
+		Skipcond 000
+		Jump nonneg
+		
+		Subt TEMP
+		Subt TEMP
+		Store TEMP
+		Clear
+		Add one
+		Store negflag
+		Clear
+		Jump loop
+		
+		nonneg,  Clear
+		         Store negflag
+		         / check if Y is zero, if it is, then we jump to halt
+		         Load TEMP
+		         Skipcond 400
+		         Jump loop / false
+		         Jump halt / true
+		
+		/ Loop for performing iterative addition
+		loop,    Load result
+		         Add FACTORIAL
+		         Store result
+		
+		         Load TEMP
+		         Subt one
+		         Store TEMP
+			
+		         Skipcond 400 / have we completed the multiplication?
+		         Jump loop / no; repeat loop
+		         / yes, so exit the loop
+		
+		/ check for negative flag, if it is set, negate the result
+		Load negflag
+		Skipcond 800
+		Jump halt
+		
+		/ negate result
+		Load result
+		Subt result
+		Subt result
+		Store result
+		/ run the next three instructions, which halts the program
+		
+		/ Output result to user then halt program
+		halt,   Load result
+				Store FACTORIAL
+				JumpI Subr1
+
+		
+		
+		
