@@ -1,4 +1,4 @@
-/ Implementación del programa de multiplicación de eje4mplo como subrutina
+/ Implementación del programa de multiplicación de ejemplo como subrutina
 ORG 000
 		Jump Start
 
