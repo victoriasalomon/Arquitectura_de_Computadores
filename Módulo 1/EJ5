@@ -3,19 +3,18 @@ ORG 000
 		Jump Start
 
 		// Sección de datos
-		X, DEC 5
-		Y, DEC 2
-		one, DEC 1
-		negflag, DEC 0
-		result, DEC 0
+		X, 			DEC 5		/ Primer operando de la multiplicación
+		Y, 			DEC 2		/ Segundo operando de la multiplicación
+		one, 		DEC 1		/ Constate unitaria
+		negflag, 	DEC 0		/ Flag paa gestión de signos
+		result, 	DEC 0		/ Resultado de la multiplicación
 
 Start,	JnS Subr		/ Llamo a la subrutina
 		Store result	/ Guardo el resultado
 		Output
 		Halt
 
-// Programa de Multiplicación de ejemplo,
-// implementado como subrutina :
+// Programa de multiplicación de ejemplo, implementado como subrutina :
 
 Subr,	HEX 0	/ Dirección de retorno
 		Clear
