@@ -1,47 +1,100 @@
-/ Cantidad de números negativos en un bloque de datos.
-ORG 00F
-		Jump Start
-		
-		// Bloque de prueba (según enunciado)
-        DEC 3           	/ Longitud del bloque
-        DEC -5          
-        DEC 10          
-        DEC -2          
-
-		// Sección de datos
-		PTR_DATOS, HEX 0011	/ Puntero de base
-		DIR_LONG, HEX 0010	/ Puntero a la longitud del bloque
-		CONT_NEG, DEC 0		/ Contador de negativos
-		REG_ITER, DEC 0		/ Registro de iteración
-		ONE, DEC 1
-
-
-Start,	LoadI DIR_LONG	/ Cargo la longitud del bloque en el registro de iteración
-		Store REG_ITER
-
-Loop,	LoadI PTR_DATOS
-		SkipCond 0000	/ Si el número es negativo, incremento el contador NEG
-		Jump NoNeg
-		
-		Load CONT_NEG
-		Add ONE
-		Store CONT_NEG
-		
-NoNeg,	Load PTR_DATOS
-		Add ONE
-		Store PTR_DATOS
-		
-		Load REG_ITER
-		Subt ONE
-		Store REG_ITER
-		
-		SkipCond 400
-		Jump Loop
-		
-		Load CONT_NEG
-		Output
-		Halt
+// Cálculo del factorial utilizando subrutinas
+ORG 000
+			Jump Start
 	
-	
+// Sección de datos
+N, 			DEC 5	/ Valor de entrada para el cálculo
+FACTORIAL, 	DEC 0	/ Acumulador del resultado total
+TEMP, 		DEC 0	/ Argumento para la multiplicación
+REG_ITER,	DEC 0	/ Contador para el factorial
+one, 		DEC 1	/ Constante unitaria
+negflag, 	DEC 0	/ Flag para gestión de signos
+result, 	DEC 0	/ Resultado parcial de la multiplicación
 
+// Bloque Principal
+Start,		Load N
+			Store REG_ITER	/ Inicializo el contador con el valor de entrada
+			Store FACTORIAL
+			JnS Fact_Subr	/ Llamo a la subrutina para el cálculo del factorial
+
+			Load FACTORIAL	/ Cargo el resultado final
+			Output
+			Halt
+
+
+// Subrutina del Factorial:
+// Gestiona el ciclo n*(n-1)! hasta que el contador llegue a 0.
+
+Fact_Subr,	HEX 0			/ Guardo la dirección de retorno
+Fact_Loop, 	Load REG_ITER
+			Subt one
+			Store REG_ITER
+			Skipcond 800	/ Condición de corte: El contador llegó a 0
+			JumpI Fact_Subr	/ Retorno al programa principal
+
+			Store TEMP		/ Guardo el segundo operando para la multiplicación
+
+			JnS Mult_Subr	/ Llamo a la subrutina para el cálculo de FACTORIAL * TEMP
+
+			Store FACTORIAL	/ Guardo el resultado parcial del producto
+			Jump Fact_Loop	/ Continúo con la siguiente iteración
+		
+
+// Subrutina de Multiplicación:
+// Programa que se ofrece como ejemplo de multiplicación iterativa sin signo	
+
+Mult_Subr,	HEX 0			/ Guardo la dirección de retorno
+			Clear
+			Store result
+	
+			/ check if Y is negative, if -ve negate Y and set negative flag
+			Load TEMP
+			Skipcond 000
+			Jump nonneg
+			
+			Subt TEMP
+			Subt TEMP
+			Store TEMP
+			Clear
+			Add one
+			Store negflag
+			Clear
+			Jump loop
+			
+			nonneg,  Clear
+			         Store negflag
+			         / check if Y is zero, if it is, then we jump to halt
+			         Load TEMP
+			         Skipcond 400
+			         Jump loop / false
+			         Jump halt / true
+			
+			/ Loop for performing iterative addition
+			loop,    Load result
+			         Add FACTORIAL
+			         Store result
+			
+			         Load TEMP
+			         Subt one
+			         Store TEMP
+				
+			         Skipcond 400 / have we completed the multiplication?
+			         Jump loop / no; repeat loop
+			         / yes, so exit the loop
+			
+			/ check for negative flag, if it is set, negate the result
+			Load negflag
+			Skipcond 800
+			Jump halt
+			
+			/ negate result
+			Load result
+			Subt result
+			Subt result
+			Store result
+			/ run the next three instructions, which halts the program
+			
+			/ Output result to user then halt program
+			halt,   Load result
+					JumpI Mult_Subr	/ Retorno a Fact_Subr
 
