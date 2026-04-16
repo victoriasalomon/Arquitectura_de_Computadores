@@ -1,98 +1,100 @@
-/ Cálculo del factorial utilizando subrutina
+/ Cálculo del factorial utilizando subrutinas
 ORG 000
-		Jump Start
+			Jump Start
+	
+// Sección de datos
+N, 			DEC 5	/ Valor de entrada para el cálculo
+FACTORIAL, 	DEC 0	/ Acumulador del resultado total
+TEMP, 		DEC 0	/ Argumento para la multiplicación
+REG_ITER,	DEC 0	/ Contador para el factorial
+one, 		DEC 1	/ Constante unitaria
+negflag, 	DEC 0	/ Flag para gestión de signos
+result, 	DEC 0	/ Resultado parcial de la multiplicación
 
-		// Sección de datos
-		N, DEC 5
-		FACTORIAL, DEC 0
-		TEMP, DEC 0
-		REG_ITER, DEC 0
-		one, DEC 1
-		negflag, DEC 0
-		result, DEC 0
+// Bloque Principal
+Start,		Load N
+			Store REG_ITER	/ Inicializo el contador con el valor de entrada
+			Store FACTORIAL
+			JnS Fact_Subr	/ Llamo a la subrutina para el cálculo del factorial
 
-Start,	Load N
-		Store REG_ITER
-		Subt one
-		Store FACTORIAL
-		JnS Subr2
-		
-		Load FACTORIAL
-		Output
-		Halt
+			Load FACTORIAL	/ Cargo el resultado final
+			Output
+			Halt
 
-// Programa de Multiplicación de ejemplo,
-// implementado como subrutina :
 
-Subr2, 	HEX 1
+// Subrutina del Factorial:
+// Gestiona el ciclo n*(n-1)! hasta que el contador llegue a 0.
 
-		Load REG_ITER
-		Subt one
-		Store REG_ITER
-		Subt one
-		Store TEMP
-		SkipCond 400
-		JnS Subr1
-		JumpI Subr2
-		
+Fact_Subr,	HEX 0			/ Guardo la dirección de retorno
+Fact_Loop, 	Load REG_ITER
+			Subt one
+			Store REG_ITER
+			Skipcond 800	/ Condición de corte: El contador llegó a 0
+			JumpI Fact_Subr	/ Retorno al programa principal
+
+			Store TEMP		/ Guardo el segundo operando para la multiplicación
+
+			JnS Mult_Subr	/ Llamo a la subrutina para el cálculo de FACTORIAL * TEMP
+
+			Store FACTORIAL	/ Guardo el resultado parcial del producto
+			Jump Fact_Loop	/ Continúo con la siguiente iteración
 		
 
-Subr1,	HEX 0	/ Dirección de retorno
-		Clear
-		Store result
+// Subrutina de Multiplicación:
+// Programa que se ofrece como ejemplo de multiplicación iterativa sin signo	
 
-		/ check if Y is negative, if -ve negate Y and set negative flag
-		Load TEMP
-		Skipcond 000
-		Jump nonneg
-		
-		Subt TEMP
-		Subt TEMP
-		Store TEMP
-		Clear
-		Add one
-		Store negflag
-		Clear
-		Jump loop
-		
-		nonneg,  Clear
-		         Store negflag
-		         / check if Y is zero, if it is, then we jump to halt
-		         Load TEMP
-		         Skipcond 400
-		         Jump loop / false
-		         Jump halt / true
-		
-		/ Loop for performing iterative addition
-		loop,    Load result
-		         Add FACTORIAL
-		         Store result
-		
-		         Load TEMP
-		         Subt one
-		         Store TEMP
+Mult_Subr,	HEX 0			/ Guardo la dirección de retorno
+			Clear
+			Store result
+	
+			/ check if Y is negative, if -ve negate Y and set negative flag
+			Load TEMP
+			Skipcond 000
+			Jump nonneg
 			
-		         Skipcond 400 / have we completed the multiplication?
-		         Jump loop / no; repeat loop
-		         / yes, so exit the loop
-		
-		/ check for negative flag, if it is set, negate the result
-		Load negflag
-		Skipcond 800
-		Jump halt
-		
-		/ negate result
-		Load result
-		Subt result
-		Subt result
-		Store result
-		/ run the next three instructions, which halts the program
-		
-		/ Output result to user then halt program
-		halt,   Load result
-				Store FACTORIAL
-				JumpI Subr1
+			Subt TEMP
+			Subt TEMP
+			Store TEMP
+			Clear
+			Add one
+			Store negflag
+			Clear
+			Jump loop
+			
+			nonneg,  Clear
+			         Store negflag
+			         / check if Y is zero, if it is, then we jump to halt
+			         Load TEMP
+			         Skipcond 400
+			         Jump loop / false
+			         Jump halt / true
+			
+			/ Loop for performing iterative addition
+			loop,    Load result
+			         Add FACTORIAL
+			         Store result
+			
+			         Load TEMP
+			         Subt one
+			         Store TEMP
+				
+			         Skipcond 400 / have we completed the multiplication?
+			         Jump loop / no; repeat loop
+			         / yes, so exit the loop
+			
+			/ check for negative flag, if it is set, negate the result
+			Load negflag
+			Skipcond 800
+			Jump halt
+			
+			/ negate result
+			Load result
+			Subt result
+			Subt result
+			Store result
+			/ run the next three instructions, which halts the program
+			
+			/ Output result to user then halt program
+			halt,   Load result
+					JumpI Mult_Subr	/ Retorno a Fact_Subr
 
-		
-		
-		
