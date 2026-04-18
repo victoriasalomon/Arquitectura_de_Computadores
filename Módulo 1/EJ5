@@ -2,45 +2,27 @@
 ORG 000
 		Jump Start
 
-		// Sección de datos
-		X, 			DEC 5		/ Primer operando de la multiplicación
-		Y, 			DEC 2		/ Segundo operando de la multiplicación
-		one, 		DEC 1		/ Constate unitaria
-		negflag, 	DEC 0		/ Flag paa gestión de signos
-		result, 	DEC 0		/ Resultado de la multiplicación
+// Sección de variables y constantes
+X, 			DEC 5		/ Primer operando de la multiplicación
+Y, 			DEC 2		/ Segundo operando de la multiplicación
+one, 		DEC 1		/ Constate unitaria
+result, 	DEC 0		/ Resultado de la multiplicación
 
+// Sección de instrucciones
 Start,	JnS Subr		/ Llamo a la subrutina
 		Store result	/ Guardo el resultado
 		Output
 		Halt
 
-// Programa de multiplicación de ejemplo, implementado como subrutina :
+// Programa de multiplicación (ejemplo del simulador):
 
-Subr,	HEX 0	/ Dirección de retorno
+Subr,	HEX 0				/ Dirección de retorno
 		Clear
 		Store result
 
-		/ check if Y is negative, if -ve negate Y and set negative flag
 		Load Y
-		Skipcond 000
-		Jump nonneg
-		
-		Subt Y
-		Subt Y
-		Store Y
-		Clear
-		Add one
-		Store negflag
-		Clear
-		Jump loop
-		
-		nonneg,  Clear
-		         Store negflag
-		         / check if Y is zero, if it is, then we jump to halt
-		         Load Y
-		         Skipcond 400
-		         Jump loop / false
-		         Jump halt / true
+        Skipcond 800    	/ Compruebo que Y sea mayor a 0
+        JumpI Subr      
 		
 		/ Loop for performing iterative addition
 		loop,    Load result
@@ -54,21 +36,9 @@ Subr,	HEX 0	/ Dirección de retorno
 		         Skipcond 400 / have we completed the multiplication?
 		         Jump loop / no; repeat loop
 		         / yes, so exit the loop
-		
-		/ check for negative flag, if it is set, negate the result
-		Load negflag
-		Skipcond 800
-		Jump halt
-		
-		/ negate result
-		Load result
-		Subt result
-		Subt result
-		Store result
-		/ run the next three instructions, which halts the program
-		
-		/ Output result to user then halt program
-		halt,   Load result
+
+				/ Output result to user
+			   	Load result
 				JumpI Subr	/ Retorno al código principal
 
 		
