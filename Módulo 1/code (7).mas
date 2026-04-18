@@ -1,0 +1,111 @@
+/ Algoritmo de ordenamiento en MARIE
+/ Victoria Nahir Salomón, 77128/6
+/ Algoritmo utilizado: INSERCIÓN
+/ Ocupación de memoria de programa: 42 instrucciones de 16 bits
+/ Ocupación de memoria de datos (sin incluir el vector): 9 de 16 bits (8 variables + 1 celda de retorno)
+/ Performance
+/ Vector ordenado -3,-2,-1,0,1,2,3 : 133 instrucciones, 922 ciclos, cpi 6.93
+/ Vector invertido 3,2,1,0,-1,-2,-3 : 313 instrucciones, 2177 ciclos, cpi 6.96
+/ Vector desordenado 0,-2,1,3,-1,2,-3 : 197 instrucciones, 1369 ciclos, cpi 6.95
+ORG 000
+Jump Ordenar
+
+/ --- Vector ordenado ---
+VECTOR, 	DEC 7 	/ Largo del vector
+			DEC -3 	/ Primer elemento del vector
+			DEC -2
+			DEC -1
+			DEC 0
+			DEC 1
+			DEC 2
+			DEC 3
+			
+/ --- Vector invetido ---
+/VECTOR, 	DEC 7 	/ Largo del vector
+/			DEC 3 	/ Primer elemento del vector
+/			DEC 2
+/			DEC 1
+/			DEC 0
+/			DEC -1
+/			DEC -2
+/			DEC -3
+
+/ --- Vector desordenado ---
+/VECTOR, 	DEC 7 	/ Largo del vector
+/			DEC 0 	/ Primer elemento del vector
+/			DEC -2
+/			DEC 1
+/			DEC 3
+/			DEC -1
+/			DEC 2
+/			DEC -3
+
+// Sección de variables y constantes
+ONE,        DEC 1       / Constante unitaria
+DIR_INICIO, HEX 002     / Dirección al inicio del vector
+LARGO,      HEX 000     / Largo del vector
+DIR_FIN,   	HEX 000     / Dirección del último elemento
+
+PI,         HEX 000     / Puntero del bucle externo (iteraciones)
+PJ,         HEX 000     / Puntero del bucle interno (inserción)
+PJ_PREV,   	HEX 000     / Puntero al elemento anterior (J-1) 
+
+VAL_ACTUAL, DEC 0       / Variable temporal para el elemento a insertar
+
+// Sección de instrucciones
+Ordenar,	Clear
+			JnS Carga_Subr	/ Inicializo punteros y límites del vector
+
+			Load DIR_INICIO	
+			Store PI		/ Apunto el puntero i al inicio
+
+Pasada,		Load PI			
+			Add ONE
+			Store PI		/ Incremento el puntero i
+
+			Load DIR_FIN	
+			Subt PI
+			Skipcond 800	/ Condición de corte: se llegó al final del vector
+			Halt
+
+			LoadI PI		/ Guardo el valor actual en un registro aparte
+			Store VAL_ACTUAL
+			Load PI
+			Store PJ		/ Apunto el puntero j a i
+			
+Loop,		Load PJ
+			Subt DIR_INICIO
+			SkipCond 800	/ Condición de corte: se llegó al inicio del vector
+			Jump Insertar
+			
+			Load PJ			
+			Subt ONE
+			Store PJ_PREV	/ Apunto el puntero auxiliar a la izquierda de j
+
+			LoadI PJ_PREV	/ valor (j-1) > valor_actual ?
+			Subt VAL_ACTUAL
+			
+			SkipCond 800
+			Jump Insertar
+
+Shift,		Add VAL_ACTUAL	/ Recupero valor(j-1) y desplazo a la derecha
+			StoreI PJ
+
+			Load PJ_PREV	/ Retrocedo una posición en j
+			Store PJ
+			Jump Loop
+
+Insertar,	Load VAL_ACTUAL	
+			StoreI PJ		/ Inserto el valor en el "hueco"
+			Jump Pasada
+
+Carga_Subr,	HEX 0			/ Dirección de retorno
+			Load VECTOR		/ Inicio largo del vector
+			Store LARGO
+			
+			Load DIR_INICIO
+			Add LARGO
+			Subt ONE
+			Store DIR_FIN	/ Límite final del vector
+			JumpI Carga_Subr/ Retorno al código principal
+			
