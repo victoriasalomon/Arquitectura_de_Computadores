@@ -1,18 +1,18 @@
 / Primeros 10 multiplos de 7
 ORG 000
 
-
+// Sección de instrucciones
 		Load Zero
-		StoreI P1	/ Inicialización de base en memoria
+		StoreI P1	/ Inicializo la base en memoria
 
 Loop,	LoadI P1
-		Add BASE	/ Cálculo del siguiente múltiplo
+		Add BASE	/ Calculo el siguiente múltiplo
 		Output
 		Store Var
 
 		Load P1
 		Add One
-		Store P1	/ Actualización de puntero (aritmética de direcciones)
+		Store P1	/ Actualizo el puntero (aritmética de direcciones)
 
 		Load Var
 		StoreI P1
@@ -24,10 +24,11 @@ Loop,	LoadI P1
 		SkipCond 400
 		Jump Loop
 		Halt
-		
-P1, HEX 0050	/ Puntero al comienzo de la zona de almacenamiento
-BASE, DEC 7		
-CONT, DEC 10	/ Número de elementos a calcular
-One, DEC 1
-Zero, DEC 0
-Var, DEC 10		/ Regitro temporal
+
+// Sección de variables y constantes
+P1, 	HEX 0050	/ Puntero al comienzo de la zona de almacenamiento
+BASE, 	DEC 7		
+CONT, 	DEC 10		/ Número de elementos a calcular
+One, 	DEC 1
+Zero, 	DEC 0
+Var, 	DEC 10		/ Regitro temporal
