@@ -2,20 +2,21 @@
 ORG 00F
 		Jump Start
 		
-		// Bloque de prueba (según enunciado)
-        DEC 3           	/ Longitud del bloque
-        DEC -5          
-        DEC 10          
-        DEC -2          
+// Bloque de prueba (según enunciado)
+DEC 3           	/ Longitud del bloque
+DEC -5          
+DEC 10          
+DEC -2          
 
-		// Sección de datos
-		PTR_DATOS, HEX 0011	/ Puntero de base
-		DIR_LONG, HEX 0010	/ Puntero a la longitud del bloque
-		CONT_NEG, DEC 0		/ Contador de negativos
-		REG_ITER, DEC 0		/ Registro de iteración
-		ONE, DEC 1
+// Sección de variables y constantes
+PTR_DATOS, 	HEX 0011	/ Puntero de base
+DIR_LONG, 	HEX 0010	/ Puntero a la longitud del bloque
+CONT_NEG, 	DEC 0		/ Contador de negativos
+REG_ITER, 	DEC 0		/ Registro de iteración
+ONE, 		DEC 1		/ Constante unitaria
 
 
+// Sección de instrucciones
 Start,	LoadI DIR_LONG	/ Cargo la longitud del bloque en el registro de iteración
 		Store REG_ITER
 
