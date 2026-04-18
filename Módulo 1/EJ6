@@ -2,16 +2,15 @@
 ORG 000
 			Jump Start
 	
-// Sección de datos
-N, 			DEC 5	/ Valor de entrada para el cálculo
+// Sección de variables y constantes
+N, 			DEC 6	/ Valor de entrada para el cálculo
 FACTORIAL, 	DEC 0	/ Acumulador del resultado total
 TEMP, 		DEC 0	/ Argumento para la multiplicación
 REG_ITER,	DEC 0	/ Contador para el factorial
 one, 		DEC 1	/ Constante unitaria
-negflag, 	DEC 0	/ Flag para gestión de signos
 result, 	DEC 0	/ Resultado parcial de la multiplicación
 
-// Bloque Principal
+// Sección de instrucciones
 Start,		Load N
 			Store REG_ITER	/ Inicializo el contador con el valor de entrada
 			Store FACTORIAL
@@ -20,7 +19,6 @@ Start,		Load N
 			Load FACTORIAL	/ Cargo el resultado final
 			Output
 			Halt
-
 
 // Subrutina del Factorial:
 // Gestiona el ciclo n*(n-1)! hasta que el contador llegue a 0.
@@ -46,28 +44,6 @@ Fact_Loop, 	Load REG_ITER
 Mult_Subr,	HEX 0			/ Guardo la dirección de retorno
 			Clear
 			Store result
-	
-			/ check if Y is negative, if -ve negate Y and set negative flag
-			Load TEMP
-			Skipcond 000
-			Jump nonneg
-			
-			Subt TEMP
-			Subt TEMP
-			Store TEMP
-			Clear
-			Add one
-			Store negflag
-			Clear
-			Jump loop
-			
-			nonneg,  Clear
-			         Store negflag
-			         / check if Y is zero, if it is, then we jump to halt
-			         Load TEMP
-			         Skipcond 400
-			         Jump loop / false
-			         Jump halt / true
 			
 			/ Loop for performing iterative addition
 			loop,    Load result
@@ -82,19 +58,6 @@ Mult_Subr,	HEX 0			/ Guardo la dirección de retorno
 			         Jump loop / no; repeat loop
 			         / yes, so exit the loop
 			
-			/ check for negative flag, if it is set, negate the result
-			Load negflag
-			Skipcond 800
-			Jump halt
-			
-			/ negate result
 			Load result
-			Subt result
-			Subt result
-			Store result
-			/ run the next three instructions, which halts the program
+			JumpI Mult_Subr	/ Retorno a Fact_Subr
 			
-			/ Output result to user then halt program
-			halt,   Load result
-					JumpI Mult_Subr	/ Retorno a Fact_Subr
-
