@@ -1,15 +1,17 @@
 / Primeros 20 elementos de la sucesión de Fibonacci
 ORG 000
 		Jump Start
-		
-		P1, HEX 0040		/ Puntero al comienzo de la zona de almacenamiento
-		NUEVO, DEC 0		/ Nuevo número de la serie (n)
-		ULTIMO, DEC 0		/ Último número de la serie (n-1)
-		PENULTIMO, DEC 0	/ Penúltimo número de la serie (n-2)
-		REG_ITER, DEC 18	/ Registro de iteraciones
-		CERO, DEC 0
-		ONE, DEC 1
 
+// Sección de variables y constantes	
+P1, 		HEX 0040	/ Puntero al comienzo de la zona de almacenamiento
+NUEVO, 		DEC 0		/ Nuevo número de la serie (n)
+ULTIMO, 	DEC 0		/ Último número de la serie (n-1)
+PENULTIMO, 	DEC 0		/ Penúltimo número de la serie (n-2)
+REG_ITER, 	DEC 18		/ Registro de iteraciones
+CERO, 		DEC 0
+ONE, 		DEC 1
+
+// Sección de instrucciones
 Start,	Load CERO	/ Primer base de la serie de Fiboacci (0)
 		StoreI P1
 		Store PENULTIMO
