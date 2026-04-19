@@ -1,12 +1,12 @@
 / Algoritmo de ordenamiento en MARIE
 / Victoria Nahir Salomón, 77128/6
 / Algoritmo utilizado: INSERCIÓN
-/ Ocupación de memoria de programa: 42 instrucciones de 16 bits
-/ Ocupación de memoria de datos (sin incluir el vector): 9 de 16 bits (8 variables + 1 celda de retorno)
+/ Ocupación de memoria de programa: 40 instrucciones de 16 bits
+/ Ocupación de memoria de datos (sin incluir el vector): 8 de 16 bits (8 variables)
 / Performance
-/ Vector ordenado -3,-2,-1,0,1,2,3 : 133 instrucciones, 922 ciclos, cpi 6.93
-/ Vector invertido 3,2,1,0,-1,-2,-3 : 313 instrucciones, 2177 ciclos, cpi 6.96
-/ Vector desordenado 0,-2,1,3,-1,2,-3 : 197 instrucciones, 1369 ciclos, cpi 6.95
+/ Vector ordenado -3,-2,-1,0,1,2,3 : 131 instrucciones, 906 ciclos, cpi 6.92
+/ Vector invertido 3,2,1,0,-1,-2,-3 : 311 instrucciones, 2161 ciclos, cpi 6.95
+/ Vector desordenado 0,-2,1,3,-1,2,-3 : 195 instrucciones, 1353 ciclos, cpi 6.94
 ORG 000
 Jump Ordenar
 
@@ -54,7 +54,14 @@ VAL_ACTUAL, DEC 0       / Variable temporal para el elemento a insertar
 
 // Sección de instrucciones
 Ordenar,	Clear
-			JnS Carga_Subr	/ Inicializo punteros y límites del vector
+
+			Load VECTOR		/ Inicializo largo del vector
+			Store LARGO
+			
+			Load DIR_INICIO
+			Add LARGO
+			Subt ONE
+			Store DIR_FIN	/ Límite final del vector
 
 			Load DIR_INICIO	
 			Store PI		/ Apunto el puntero i al inicio
@@ -99,13 +106,4 @@ Insertar,	Load VAL_ACTUAL
 			StoreI PJ		/ Inserto el valor en el "hueco"
 			Jump Pasada
 
-Carga_Subr,	HEX 0			/ Dirección de retorno
-			Load VECTOR		/ Inicio largo del vector
-			Store LARGO
-			
-			Load DIR_INICIO
-			Add LARGO
-			Subt ONE
-			Store DIR_FIN	/ Límite final del vector
-			JumpI Carga_Subr/ Retorno al código principal
 			
