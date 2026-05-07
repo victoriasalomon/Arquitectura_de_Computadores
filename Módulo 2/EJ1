@@ -1,0 +1,31 @@
+;
+; EJ1.asm
+;
+; Created: 5/7/2026 4:16:41 PM
+; Author : Dell
+;
+;Se propone implementar un programa simple que realice la suma de dos números enteros
+;de 16 bits que se encuentran almacenados en la memoria SRAM.
+
+.def num1L = r16;	byte bajo del primer numero
+.def num1H = r17;	byte alto del primer numero
+.def num2L = r18;	byte bajo del segundo numero
+.def num2H = r19;	byte alto del segundo numero
+
+start:
+	
+	; Cargo los numeros desde la SRAM
+
+	lds num1l, 0x0100
+	lds num1H, 0x0101
+	lds num2L, 0x0102
+	lds num2H, 0x0103
+
+	add num1L, num2L;	sumo los bytes bajos (sin carry, queda en el SREG)
+	adc num1H, num2H;	sumo los bytes altos con el carry anterior
+
+	rjmp start
+
+; cantidad de instrucciones: 7 instrucciones.
+; cantidad de bytes de memoria: 22 bytes.
+; cantidad de ciclos de reloj: 12 ciclos.
