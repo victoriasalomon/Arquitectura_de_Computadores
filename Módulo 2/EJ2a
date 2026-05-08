@@ -1,0 +1,36 @@
+;
+; EJ2.asm
+;
+; Created: 5/7/2026 6:53:31 PM
+; Author : Dell
+;
+;Desarrolle un programa para AVR que realice el producto entre dos números
+;positivos, donde el multiplicando y el producto sean de dos bytes y el
+;multiplicador de un byte, utilizando la instruccion MUL.
+
+.include "m328pdef.inc"
+
+.def mult_L = r16;	byte bajo del multiplicando
+.def mult_H = r17;	byte alto del multiplicando
+.def factor = r18;	byte del multiplicador 
+.def resul_L = r19;	byte bajo del producto
+.def resul_H = r20;	byte alto del producto
+
+start:
+	; Cargo valores de prueba
+	ldi mult_L, 0x2C;	parte baja de 0x012C (300)
+	ldi mult_H, 0x01;	parte alta de 0x012C (300)
+	ldi factor, 0x02
+
+	; Multiplico la parte baja
+	mul mult_L, factor
+	mov resul_L, r0; guardo el byte bajo del producto
+	mov resul_H, r1; guardo el carry en el byte alto
+
+	; Multiplico la parte alta
+	mul mult_H, factor
+	add resul_H, r0; sumo el byte bajo del producto con el carry anterior
+
+	;ignoramos el R1 y el carry del SREG porque el enunciado dice que el producto debe ser de dos bytes.
+
+	rjmp start
