@@ -1,0 +1,29 @@
+;
+; EJ2b.asm
+;
+; Created: 5/9/2026 2:17:38 AM
+; Author : Dell
+;
+
+.def mult_L	=	r16;	multiplicando (byte bajo)
+.def mult_H	=	r17;	multiplicando (byte alto)
+.def factor	=	r18;	multiplicador
+.def aux_L	=	r19;	registro auxiliar (byte bajo)
+.def aux_H	=	r20;	registro auxiliar (byte alto)
+.def res_L	=	r21;	resultado parcial (byte bajo)
+.def res_H	=	r22;	resultado parcial (byte alto)
+
+start:
+	ldi mult_L, 0x2C;	cargo el multiplicando (0x012C)
+	ldi mult_H, 0x01	
+	ldi factor, 0x02;	cargo el multiplicador
+
+	
+	mov aux_L, mult_L;	copio el multiplicando al registro auxiliar
+	mov aux_H, mult_H
+	
+	clr res_L;			limpio el resultado parcial
+	clr res_H
+
+loop:
+	
