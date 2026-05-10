@@ -4,6 +4,9 @@
 ; Created: 5/9/2026 2:17:38 AM
 ; Author : Dell
 ;
+;Desarrolle un programa para AVR que realice el producto entre dos números
+;positivos, donde el multiplicando y el producto sean de dos bytes y el
+;multiplicador de un byte, sin utilizar la instrucción MUL.
 
 .def mult_L	=	r16;	multiplicando (byte bajo)
 .def mult_H	=	r17;	multiplicando (byte alto)
@@ -14,8 +17,8 @@
 .def res_H	=	r22;	resultado parcial (byte alto)
 
 start:
-	ldi mult_L, 0x2C;	cargo el multiplicando (0x012C)
-	ldi mult_H, 0x01	
+	ldi mult_L, 0x2C;	cargo el byte bajo del multiplicando
+	ldi mult_H, 0x01;	cargo el byte alto del multiplicando
 	ldi factor, 0x02;	cargo el multiplicador
 
 	
@@ -26,4 +29,19 @@ start:
 	clr res_H
 
 loop:
-	
+	lsr factor;			desplazo 1 bit a la derecha el multiplicador
+	brcc shift;			si el bit es 0 no sumo, solo desplazo el multiplicando
+
+	add res_L, aux_L;	sumo el registro auxiliar con el resultado parcial
+	adc res_H, aux_H
+
+shift:
+	lsl aux_L;			desplazo el bit 7 del byte bajo (se guarda en el SREG)
+	rol aux_H;			el carry entra al bit 0 del byte alto
+
+	tst factor;			me fijo si quedan bits en el multiplicador
+	brne loop;			si quedan bits, vuelvo a empezar
+	rjmp end
+
+end:
+	rjmp end;			bucle infinito
