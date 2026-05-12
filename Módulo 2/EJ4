@@ -1,0 +1,39 @@
+;
+; EJ4.asm
+;
+; Created: 5/10/2026 3:22:45 AM
+; Author : vnsalomon@alu.ing.unlp.edu.ar
+;
+; Primeros elementos de la sucesión de Fibonacci almacenados en memoria
+
+.equ max_elementos = 13;	máximo 13 elemetos porque los registros son de 8 bits 
+.equ tabla = 0x0100;		defino la dirección base en la SRAM
+
+.def nuevo = r16
+.def ultimo = r17
+.def penultimo = r18
+.def cont = r19;			contador para los elementos
+
+ldi XH, high(tabla);		apunto el puntero x al inicio de la tabla
+ldi XL, low(tabla)
+
+ldi penultimo, 0;			los dos primeros elementos son 0 y 1
+st X+, penultimo						
+ldi ultimo, 1				
+st X+, ultimo
+
+ldi cont, max_elementos - 2
+
+loop:
+	mov nuevo, penultimo
+	add nuevo, ultimo;		n = (n-2) + (n-1)
+	st X+, nuevo			
+	
+	mov penultimo, ultimo;	n-1 ahora es el n-2 de la próxima vuelta
+	mov ultimo, nuevo;		el nuevo ahora es el n-1 de la próxima vuelta
+
+	dec cont
+	brne loop
+
+end:
+	rjmp end;	bucle infinito
