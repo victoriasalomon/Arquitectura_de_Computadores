@@ -1,0 +1,43 @@
+;
+; EJ5.asm
+;
+; Created: 5/13/2026 5:40:28 PM
+; Author : vnsalomon@alu.ing.unlp.edu.ar
+;
+; Subrutina en AVR para retornar el mínimo de un vector.
+
+
+.def length = r20;		cantidad de elementos
+
+; inicializo el puntero de pila (stack pointer)
+ldi r16, low (RAMEND)
+out SPL, r16;			SP al final de la SRAM
+ldi r16, high(RAMEND)
+out SPH, r16		
+
+ldi XL, low(0x0200);	puntero X al inicio del vector
+ldi XH, high(0x0200)
+ldi length, 10
+
+rcall minimo;			llamo a la subrutina
+
+here:
+	rjmp here;			bucle infinito
+
+minimo:
+	ld r17, X+;			cargo el primer elemento como mínimo actual
+	dec length
+	breq end
+
+loop:
+	ld r18, X+;			cargo el siguiente elemento para comparar
+	cp r18, r17;		nuevo elemento < minimo actual?
+	brsh skip
+	mov r17, r18;		actualizo nuevo mínimo
+
+skip:
+	dec length
+	brne loop
+
+end:
+	ret;				retorno de la subrutina
