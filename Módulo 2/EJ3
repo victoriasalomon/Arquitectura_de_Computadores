@@ -1,0 +1,47 @@
+;
+; EJ3.asm
+;
+; Created: 5/13/2026 12:09:22 AM
+; Author : vnsalomon@alu.ing.unlp.edu.ar
+;
+;Proponga una secuencia de instrucciones AVR que invierta el orden de un arreglo de caracteres que se
+;encuentra almacenado en los registros r0~r9 y almacene el arreglo invertido en los
+;registros r10~r19:
+
+;					mov r19, r0;
+;					mov r18, r1
+;					mov r17, r2
+;					mov r16, r3
+;					mov r15, r4
+;					mov r14, r5
+;					mov r13, r6
+;					mov r12, r7
+;					mov r11, r8
+;					mov r10, r9
+
+
+;Compare con el código que resulta si el arreglo de caracteres se encuentra
+;almacenado en la memoria interna, comenzando en la dirección 0x0201 y cuya
+;cantidad de elementos consecutivos se indica en la dirección 0x0200:
+
+lds r16, 0x0200;		cantidad de elementos
+
+ldi XL, low (0x0201);	puntero X al inicio del arreglo original
+ldi XH, high(0x0201)
+
+
+ldi YL, low(0x0300);	puntero Y al inicio del arreglo destino 
+ldi YH, high(0x0300);	(0x0300 como dirección destino del arreglo invertido)
+
+add YL, r16;			me posiciono al final del arreglo destino
+clr r17;				registro auxiliar en cero
+adc YH, r17;			
+
+loop:
+	ld r0, X+;			leo el primer elemento del arreglo y avanzo una posición
+	st -Y, r0;			retrocedo una posición y guardo el elemento en destino
+	dec r16;			decremento el contador
+	brne loop
+	
+end:
+	rjmp end;			bucle infinito
