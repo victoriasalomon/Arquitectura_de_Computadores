@@ -101,3 +101,4 @@ terminar:
 	st Z+, r16;				guardo el caracter de retorno de carro
 	ret
 	
+; Prueba de escritorio : 53 41 4c 4f 4d 4f 4e 20 37 37 31 32 38 2f 36 0d 00  SALOMON 77128/6..
