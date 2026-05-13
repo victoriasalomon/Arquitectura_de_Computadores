@@ -1,0 +1,103 @@
+;
+; EJ6.asm
+;
+; Created: 5/13/2026 7:09:34 PM
+; Author : vnsalomon@alu.ing.unlp.edu.ar
+;
+
+;Genere una cadena de caracteres codificados en ASCII con su apellido en minúsculas
+;seguido por un caracter nulo y su número de alumno. La cadena debe comenzar en la
+;dirección 0x0100 y terminar con el caracter CR=0x0D (Carriage Return, retorno de
+;carro). Luego, utilizando una subrutina, reemplace las letras minúsculas por
+;mayúsculas y los caracteres 0 por caracteres Espacio (SP=0x20). Almacene la nueva
+;cadena en la dirección 0x0120.
+
+; Inicializo el puntero de pila (stack pointer)
+	ldi r16, low (RAMEND)
+	out SPL, r16;			SP al final de la SRAM
+	ldi r16, high(RAMEND)
+	out SPH, r16
+
+	ldi YL, low(0x0100);	apunto Y al comienzo de la cadena
+	ldi YH, high (0x0100)
+
+; Cargo la cadena de caracteres
+	ldi r16, 's';	apellido
+	st Y+, r16
+	ldi r16, 'a'
+	st Y+, r16
+	ldi r16, 'l'
+	st Y+, r16
+	ldi r16, 'o'
+	st Y+, r16
+	ldi r16, 'm'
+	st Y+, r16
+	ldi r16, 'o'
+	st Y+, r16
+	ldi r16, 'n'
+	st Y+, r16
+
+	ldi r16, 0;		caracter nulo
+	st Y+, r16
+
+	ldi r16, '7';	número de alumno
+	st Y+, r16
+	ldi r16, '7'
+	st Y+, r16
+	ldi r16, '1'
+	st Y+, r16
+	ldi r16, '2'
+	st Y+, r16
+	ldi r16, '8'
+	st Y+, r16
+	ldi r16, '/'
+	st Y+, r16
+	ldi r16, '6'
+	st Y+, r16
+
+	ldi r16, 0x0D;	caracter de retorno
+	st Y+, r16
+
+	rcall procesar_cadena
+
+halt:
+	rjmp halt;				bucle infinito
+
+
+; --- Subrutina ---
+
+procesar_cadena:
+	ldi YL, low(0x0100);	retrocedo el puntero al inicio de la cadena
+	ldi YH, high (0x0100)
+
+	ldi ZL, low(0x0120);	apunto Z al comienzo del destino
+	ldi ZH, high(0x0120)
+
+bucle_lectura:
+	ld r16, Y+;				tomo un caracter de la cadena
+
+	cpi r16, 0x0D;			es el caracter de retorno de carro?
+	breq terminar
+
+	cpi r16, 0;				es el caracter nulo?
+	brne check_min
+	ldi r16, ' ';			si es el nulo lo reemplazo por un espacio
+	rjmp guardar
+
+check_min:
+	cpi r16, 'a';			es menor a 'a'?
+	brlo guardar
+
+	cpi r16, 'z' + 1;		es mayor a z?
+	brsh guardar
+
+	subi r16, 32;			convierto minusculas en mayusculas restándole 32
+
+guardar:
+	st Z+, r16
+	rjmp bucle_lectura
+
+terminar:
+	st Z+, r16;				guardo el caracter de retorno de carro
+	ret
+	
