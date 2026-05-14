@@ -5,30 +5,34 @@
 ; Author : vnsalomon@alu.ing.unlp.edu.ar
 ;
 
+.def cont_1 = r17
+.def cant_bits = r18
+
 ; inicializo el puntero de pila (stack pointer)
 ldi r16, low(RAMEND)
 out SPL, r16;			SP al final de la SRAM
 ldi r16, high(RAMEND)
 out SPH, r16
 
-ldi r16, 0b11010111
-rcall detector_paridad
+ldi r16, 0b11010111;	cargo el mensaje de prueba
+rcall check_par;		llamo a la subrutina
+sts 0x0110, cont_1;		si en la dirección 0110 hay un 1: error!!
 
 halt:
-	rjmp halt
+	rjmp halt;			bucle infinito
 
-detector_paridad:
-	clr r17
-	ldi r18, 8
-	mov r19, r16
+check_par:
+	clr cont_1;			limpio el contador de unos
+	ldi cant_bits, 8;	
+	mov r19, r16;		copio el dato al registro para preservar el original
 
 loop:
-	lsl r19
-	brcc skip
-	inc r17
+	lsl r19;			desplazo bit de la izquierda al carry
+	brcc skip;			si el bit es 0, no lo cuento		
+	inc cont_1;			si el bit es 1, incremento el contador de unos
 
 skip:
-	dec r18
+	dec cant_bits;		decremento contador de vueltas
 	brne loop
-	andi r17, 0x01
+	andi cont_1, 0x01;	máscara para verificar si el total de unos es impar
 	ret
