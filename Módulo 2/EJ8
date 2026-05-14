@@ -1,0 +1,34 @@
+;
+; EJ8.asm
+;
+; Created: 5/14/2026 1:17:02 AM
+; Author : vnsalomon@alu.ing.unlp.edu.ar
+;
+
+; inicializo el puntero de pila (stack pointer)
+ldi r16, low(RAMEND)
+out SPL, r16;			SP al final de la SRAM
+ldi r16, high(RAMEND)
+out SPH, r16
+
+ldi r16, 0b11010111
+rcall detector_paridad
+
+halt:
+	rjmp halt
+
+detector_paridad:
+	clr r17
+	ldi r18, 8
+	mov r19, r16
+
+loop:
+	lsl r19
+	brcc skip
+	inc r17
+
+skip:
+	dec r18
+	brne loop
+	andi r17, 0x01
+	ret
