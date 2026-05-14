@@ -1,0 +1,65 @@
+;
+; EJ9.asm
+;
+; Created: 5/14/2026 5:13:32 PM
+; Author : vnsalomon@alu.ing.unlp.edu.ar
+;
+; Si el micro corre a 16 MHz, lograr un delay de 0.05 segundos equivale a 800.000 ciclos perdiendo el tiempo.
+
+.include "m328pdef.inc"
+
+.def toggle		= r16
+.def led_reg	= r17
+.def outloop	= r18
+.def inloop_L	= r24
+.def inloop_H	= r25
+
+.equ in_count	= 10000;	valores calculados para 0.05s de retardo
+.equ out_count	= 20
+
+.cseg;						guardo el programa en memoria flash
+.org 0x0000
+
+clr led_reg;				limpio el registro del led
+ldi toggle, (1<<PINB0);		máscara para el bit del led
+out DDRB, toggle;			configuro PINB0 como salida
+
+main:
+	eor led_reg, toggle;	invierto el estado del led
+	out PORTB, led_reg
+
+; >> rutina bloqueate (retardo) <<
+
+	ldi outloop, out_count
+
+out_loop:
+	ldi inloop_L, low(in_count)
+	ldi inloop_H, high(in_count)
+
+in_loop:
+	sbiw inloop_L, 1;		bucle intero
+	brne in_loop
+
+	dec outloop;			bucle externo
+	brne out_loop
+
+	rjmp main
+
+; >> Cálculo del tiempo de delay <<:
+; in_loop:
+;	- sbiw: 2 ciclos de reloj
+;	- brne: 1 ciclo si es falso
+;			    2 ciclos si es verdadero
+; out_loop:
+;	- 2 x ldi: 2 ciclos
+;	- in_loop: (4 x in_count)-1
+;	- dec: 1 ciclo
+;	- brne: 1 ciclo si es falso
+;			    2 ciclos si es verdadero
+
+; Cada vuelta del out_loop: 2 + (4 x in_count -1) + 3
+; 800.000 ciclos: out_count x (4 x in_count + 4)
+; Fijamos in_count en 10.000 -> out_count = 20
+	 
+
+
