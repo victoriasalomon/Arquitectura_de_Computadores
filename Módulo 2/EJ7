@@ -1,0 +1,46 @@
+;
+; EJ7.asm
+;
+; Created: 5/13/2026 8:54:55 PM
+; Author : vnsalomon@alu.ing.unlp.edu.ar
+;
+;En dos direcciones consecutivas de memoria se encuentra contenido un BCD menor a
+;10000. Indique en cuatro posiciones de memoria consecutivas las cantidades de
+;unidades de mil, centenas, decenas y unidades que contiene dicho número.
+
+; Carga inicial de datos
+ldi r20, 0x85      
+sts 0x0200, r20
+ldi r20, 0x39      
+sts 0x0201, r20    
+
+; Proceso el primer byte
+lds r16, 0x0200;	cargo el byte con miles y decenas
+
+; extraigo miles
+mov r17, r16
+swap r17;			giro para que el mil quede a la derecha
+andi r17, 0x0F;		mascara para quedarme solo con el mil
+sts 0x0100, r17;	guardo los miles
+
+; extraigo centenas
+mov r17, r16
+andi r17, 0x0F;		máscara para quedarme solo con las centenas
+sts 0x0101, r17;	guardo las centenas 
+
+; Proceso el segundo byte
+lds r16, 0x0201;	cargo el byte con decenas y unidades
+
+; extraigo decenas
+mov r17, r16
+swap r17;			giro para que las decenas queden a la derecha
+andi r17, 0x0F;		máscara para quedarme solo con las decenas
+sts 0x0102, r17;	guardo las decenas
+
+; extraigo unidades
+mov r17, r16
+andi r17, 0x0F;		mascara para quedarme solo con las unidades
+sts 0x0103, r17;	guardo las unidades
+
+halt:
+	rjmp halt;		bucle infinito
