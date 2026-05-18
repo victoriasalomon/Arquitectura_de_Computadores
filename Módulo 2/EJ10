@@ -1,0 +1,93 @@
+;
+; EJ10.asm
+;
+; Created: 5/17/2026 6:19:47 PM
+; Author : vnsalomon@alu.ing.unlp.edu.ar
+;
+
+.include "m328pdef.inc"
+
+.org 0x0000
+	rjmp start
+.org INT0addr
+	rjmp interr_0
+.org OC1Aaddr
+	rjmp timer_1
+
+start:
+	; Inicializo el puntero de pila (stack pointer)
+	ldi R16, low (RAMEND)
+	out SPL, R16;	SP al final de la SRAM
+	ldi R16, high(RAMEND)
+	out SPH, R16
+
+	; Configuración del pulsador
+	ldi R16, 0x00
+	out DDRD, R16;	Puerto D como entrada
+
+	ldi R16, 0x04
+	out PORTD, R16;	Activo la resistencia pull-up en PD2
+
+	; Configuración del LED
+	sbi DDRB, DDB0;	Pin 0 como salida
+
+	; Configuración de interrupción externa
+	ldi R16, 0x02;	Configuro INTO por flanco descendente
+	sts EICRA, R16
+
+	ldi R16, 0x01
+	out EIMSK, R16;	Habilito la interrupción local de INT0
+
+	; Configuración de sleep
+	ldi R16, 0x01;	Habilito el bajo consumo (Modo IDLE)
+	out SMCR, R16
+
+	; Habilito interrupciones globales
+	sei
+
+main:
+	sleep
+	rjmp main
+
+interr_0:
+	; Cargo el valor de comparación para el Timer 1
+	ldi R16, high(62500)
+	sts OCR1AH, R16
+	ldi R16, low(62500)
+	sts OCR1AL, R16
+	; Preparo el contador para los 5 segundos (250 ms * 20)
+	ldi R18, 20
+	; Habilito la interrupcion local del Timer 1
+	ldi R16, 0x02
+	sts TIMSK1, R16
+	; Habilito el Timer 1
+	ldi R16, 0b00001011	
+	sts TCCR1B, R16;	Prescaler en 64
+
+	reti
+
+timer_1:
+	; Parpadeo del LED 
+	in R16, PORTB
+	ldi R17, 0x01
+	eor R16, R17
+	out PORTB, R16
+
+	dec R18;			Decremento el contador
+	brne end_timer1;	Si no llegó a 0, salimos de la interrupción
+	cbi PORTB, PB0;		Apago el LED
+
+	ldi R16, 0x00
+	sts TCCR1B, R16;	Apago el Timer 1
+	sts TIMSK1, R16;	Deshabilito la interrupción local del Timer 1
+
+end_timer1:
+	reti
+
+
+
+
+
+
+		
+
