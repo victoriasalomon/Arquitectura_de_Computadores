@@ -66,7 +66,7 @@ no_null:
 	; Algoritmo de ordenamiento
 	; ======================================================================
 
-	ldi XH, high(VECTOR + 1);		Puntero X al segundo elemento del vector
+	ldi XH, high(VECTOR + 1);	Puntero X al segundo elemento del vector
 	ldi XL, low(VECTOR + 1)
 	ldi CONT_ELEM, LARGO_VECTOR-1
 
